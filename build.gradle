@@ -40,6 +40,18 @@ allprojects {
         }
         jcenter()
     }
+
+    task checkstyle(type: Checkstyle) {
+        showViolations = true
+        configFile file("config/checkstyle.xml")
+
+        source 'entry/src/main/java'
+        source 'handdetectionlib/src/main/java'
+        include '**/*.java'
+
+        // empty classpath
+        classpath = files()
+    }
 }
 
 checkstyle {
@@ -50,8 +62,8 @@ sonarqube {
     properties {
         property "sonar.projectKey", "applibgroup_HandDetection"
         property "sonar.organization", "applibgroup"
-        property "sonar.host.url", "http://localhost:9000"
-        property "sonar.sources", "entry,handetectionlib,tvm"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.sources", "entry,handetectionlib"
         property "sonar.java.binaries", "entry/build"
     }
 }
