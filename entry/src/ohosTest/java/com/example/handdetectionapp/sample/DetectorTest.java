@@ -9,19 +9,17 @@ import static org.junit.Assert.assertEquals;
 
 public class DetectorTest {
 	
-	private static String img_path = "entry/resources/rawfile/sign_img.txt";
-	private static String img_name = "sign_img.txt";
-        private static final int IMGW = 1600;
-        private static final int IMGH = 1168;
-	private Context mContext;
-	private Detector mydetector;
-	
+    private static String imgPath = "entry/resources/rawfile/sign_img.txt";
+    private static String imgName = "sign_img.txt";
+    private static final int IMGW = 1600;
+    private static final int IMGH = 1168;
+
     @Test
     public void test() {
-    	
-    	mContext = AbilityDelegatorRegistry.getAbilityDelegator().getAppContext();
-    	
-    	mydetector = new Detector(img_path, img_name, IMGH, IMGW, 
+
+        Context mContext = AbilityDelegatorRegistry.getAbilityDelegator().getAppContext();
+
+        Detector mydetector = new Detector(imgPath, imgName, IMGH, IMGW,
                            mContext.getResourceManager(), mContext.getCacheDir());
     	
     	int[][] output = mydetector.get_output();

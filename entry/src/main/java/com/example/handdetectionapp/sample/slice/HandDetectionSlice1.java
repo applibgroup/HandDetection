@@ -27,6 +27,7 @@ import java.io.IOException;
  */
 
 public class HandDetectionSlice1 extends AbilitySlice {
+    private static final String TAG = HandDetectionSlice1.class.getName();
     private Text resourcesText;
     private static final String MODEL_INPUT_IMAGE_PATH = "entry/resources/base/media/sample.jpg";
     private static final String MODEL_INPUT_IMAGE_NAME = "sample.jpg";
@@ -47,7 +48,7 @@ public class HandDetectionSlice1 extends AbilitySlice {
         try {
             handdetectionrun1();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.error(TAG, e.getMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class HandDetectionSlice1 extends AbilitySlice {
                         + System.lineSeparator() + " Finish !");
         RawFileEntry rawfileimg = getResourceManager().getRawFileEntry(MODEL_INPUT_IMAGE_PATH);
         File fileImg = null;
-        fileImg = getFileFromRawFile(MODEL_INPUT_IMAGE_NAME, rawfileimg, getCacheDir());
+        fileImg = HandDetectionSliceUtils.getFileFromRawFile(MODEL_INPUT_IMAGE_NAME, rawfileimg, getCacheDir());
 
         ImageSource imagesource = ImageSource.create(fileImg, null);
         PixelMap pixelmap = imagesource.createPixelmap(null);
@@ -111,22 +112,5 @@ public class HandDetectionSlice1 extends AbilitySlice {
         imagepacker.initializePacking(outputstream, packingoptions);
         imagepacker.addImage(texture.getPixelMap());
         imagepacker.finalizePacking();
-    }
-
-    private static File getFileFromRawFile(String filename, RawFileEntry rawFileEntry, File cacheDir)
-            throws IOException {
-        byte[] buf = null;
-        File file;
-        file = new File(cacheDir, filename);
-        try (FileOutputStream output = new FileOutputStream(file)) {
-            Resource resource = rawFileEntry.openRawFile();
-            buf = new byte[(int) rawFileEntry.openRawFileDescriptor().getFileSize()];
-            int bytesRead = resource.read(buf);
-            if (bytesRead != buf.length) {
-                throw new IOException("Asset Read failed!!!");
-            }
-            output.write(buf, 0, bytesRead);
-            return file;
-        }
     }
 }
