@@ -30,7 +30,15 @@ public class ImageAbilitySlice extends AbilitySlice {
         img.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
-                present(new HandDetectionSlice(), new Intent());
+                String imagePath = "entry/resources/base/media/sign.jpg";
+                String imageName = "sign.jpg";
+                String imageIPath = "entry/resources/rawfile/sign_img.txt";
+                String imageIName = "sign_img.txt";
+                String outImageName = "out.jpg";
+                int imgWidth = 1600;
+                int imgHeight = 1168;
+                present(new HandDetectionSlice(imagePath, imageName, imageIPath, imageIName, outImageName,
+                imgWidth, imgHeight), new Intent());
             }
         });
 
@@ -42,7 +50,15 @@ public class ImageAbilitySlice extends AbilitySlice {
         img1.setClickedListener(new Component.ClickedListener() {
             @Override
             public void onClick(Component component) {
-                present(new HandDetectionSlice1(), new Intent());
+                String imagePath1 = "entry/resources/base/media/sample.jpg";
+                String imageName1 = "sample.jpg";
+                String imageIPath1 = "entry/resources/rawfile/sample_img.txt";
+                String imageIName1 = "sample_img.txt";
+                String outImageName1 = "out_sample.jpg";
+                int imgWidth1 = 640;
+                int imgHeight1 = 480;
+                present(new HandDetectionSlice(imagePath1, imageName1, imageIPath1, imageIName1, outImageName1,
+                        imgWidth1, imgHeight1), new Intent());
             }
         });
 

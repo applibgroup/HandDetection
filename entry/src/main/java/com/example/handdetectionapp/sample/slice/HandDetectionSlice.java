@@ -31,13 +31,26 @@ public class HandDetectionSlice extends AbilitySlice {
 
     private static final String TAG = HandDetectionSlice.class.getName();
     private Text resourcesText;
-    private static final String MODEL_INPUT_IMAGE_PATH = "entry/resources/base/media/sign.jpg";
-    private static final String MODEL_INPUT_IMAGE_NAME = "sign.jpg";
-    private static final String MODEL_INPUT_IPATH = "entry/resources/rawfile/sign_img.txt";
-    private static final String MODEL_INPUT_INAME = "sign_img.txt";
-    private static final String MODEL_OUTPUT_IMAGE_NAME = "out.jpg";
-    private static final int IMGW = 1600;
-    private static final int IMGH = 1168;
+    private String modelInputImagePath;
+    private String modelInputImageName;
+    private String modelInputIpath;
+    private String modelInputIname;
+    private String modelOutputImageName;
+    private int imgw;
+    private int imgh;
+    private static final int IMGDISPW = 1500;
+    private static final int IMGDISPH = 800;
+
+    public HandDetectionSlice(String imagePath, String imageName, String imageIPath, String imageIName,
+                              String outImageName, int imgWidth, int imgHeight) {
+        modelInputImagePath = imagePath;
+        modelInputImageName = imageName;
+        modelInputIpath = imageIPath;
+        modelInputIname = imageIName;
+        modelOutputImageName = outImageName;
+        imgw = imgWidth;
+        imgh = imgHeight;
+    }
 
     @Override
     public void onStart(Intent intent) {
@@ -56,8 +69,8 @@ public class HandDetectionSlice extends AbilitySlice {
 
     private void handdetectionrun() throws IOException {
         int[][] handcoordinates;
-        Detector mydetector = new Detector(MODEL_INPUT_IPATH, MODEL_INPUT_INAME,
-                IMGH, IMGW, getResourceManager(), getCacheDir());
+        Detector mydetector = new Detector(modelInputIpath, modelInputIname,
+                imgh, imgw, getResourceManager(), getCacheDir());
         handcoordinates = mydetector.get_output();
         resourcesText.setText(" ");
         resourcesText.setText(
@@ -65,9 +78,9 @@ public class HandDetectionSlice extends AbilitySlice {
                         + handcoordinates[0][0] + ", " + handcoordinates[0][1]
                         + ", " + handcoordinates[1][0] + ", " + handcoordinates[1][1]
                         + System.lineSeparator() + " Finish !");
-        RawFileEntry rawfileimg = getResourceManager().getRawFileEntry(MODEL_INPUT_IMAGE_PATH);
+        RawFileEntry rawfileimg = getResourceManager().getRawFileEntry(modelInputImagePath);
         File fileImg = null;
-        fileImg = HandDetectionSliceUtils.getFileFromRawFile(MODEL_INPUT_IMAGE_NAME, rawfileimg, getCacheDir());
+        fileImg = getFileFromRawFile(modelInputImageName, rawfileimg, getCacheDir());
 
         ImageSource imagesource = ImageSource.create(fileImg, null);
         PixelMap pixelmap = imagesource.createPixelmap(null);
@@ -89,8 +102,8 @@ public class HandDetectionSlice extends AbilitySlice {
 
         Image img2 = new Image(this);
         img2.setPixelMap(texture.getPixelMap());
-        img2.setHeight(800);
-        img2.setWidth(1500);
+        img2.setHeight(IMGDISPH);
+        img2.setWidth(IMGDISPW);
         DirectionalLayout layout = new DirectionalLayout(getContext());
         layout.addComponent(img2);
         resourcesText.setTextSize(60);
@@ -106,7 +119,7 @@ public class HandDetectionSlice extends AbilitySlice {
 
         FileOutputStream outputstream = null;
         outputstream = new FileOutputStream(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-                + "/" + MODEL_OUTPUT_IMAGE_NAME);
+                + "/" + modelOutputImageName);
         ImagePacker imagepacker = ImagePacker.create();
         ImagePacker.PackingOptions packingoptions = new ImagePacker.PackingOptions();
         packingoptions.format = "image/jpeg";
@@ -114,5 +127,22 @@ public class HandDetectionSlice extends AbilitySlice {
         imagepacker.initializePacking(outputstream, packingoptions);
         imagepacker.addImage(texture.getPixelMap());
         imagepacker.finalizePacking();
+    }
+
+    public static File getFileFromRawFile(String filename, RawFileEntry rawFileEntry, File cacheDir)
+            throws IOException {
+        byte[] buf = null;
+        File file;
+        file = new File(cacheDir, filename);
+        try (FileOutputStream output = new FileOutputStream(file)) {
+            Resource resource = rawFileEntry.openRawFile();
+            buf = new byte[(int) rawFileEntry.openRawFileDescriptor().getFileSize()];
+            int bytesRead = resource.read(buf);
+            if (bytesRead != buf.length) {
+                throw new IOException("Asset Read failed!!!");
+            }
+            output.write(buf, 0, bytesRead);
+            return file;
+        }
     }
 }
