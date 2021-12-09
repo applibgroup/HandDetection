@@ -10,6 +10,7 @@ An ai based hand detection model which can detection location of hand in an imag
 
 # Source
 This library has been inspired by YOLO object detection model.
+[Github repo](https://github.com/MahmudulAlam/Unified-Gesture-and-Fingertip-Detection).
 
 ## Integration
  1. For using handdetection module in sample app, include the source code and add the below dependencies in entry/build.gradle to generate hap/support.har.
